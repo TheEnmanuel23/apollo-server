@@ -44,12 +44,14 @@ jobs:
   #     - common_test_steps
 
   NodeJS 8:
-    executor: { name: oss/node, tag: '8' }
+    docker:
+    - image: cimg/node:8.17.0
     steps:
       - common_test_steps
 
   NodeJS 10:
-    executor: { name: oss/node, tag: '10' }
+    docker:
+    - image: cimg/node:10.24.1
     steps:
       - common_test_steps
       # We will save the results of this one particular invocation to use in
@@ -63,12 +65,20 @@ jobs:
             - ./**
 
   NodeJS 12:
-    executor: { name: oss/node, tag: '12' }
+    docker:
+    - image: cimg/node:12.22.1
     steps:
       - common_test_steps
 
   NodeJS 14:
-    executor: { name: oss/node, tag: '14' }
+    docker:
+    - image: cimg/node:14.16.1
+    steps:
+      - common_test_steps
+
+  NodeJS 16:
+    docker:
+    - image: cimg/node:16.0.0
     steps:
       - common_test_steps
 
@@ -124,6 +134,8 @@ workflows:
           <<: *common_non_publish_filters
       - NodeJS 14:
           <<: *common_non_publish_filters
+      - NodeJS 16:
+          <<: *common_non_publish_filters
       - "Check for FIXM\x45"
       - oss/lerna_tarballs:
           name: Package tarballs
@@ -134,6 +146,7 @@ workflows:
             - NodeJS 10
             - NodeJS 12
             - NodeJS 14
+            - NodeJS 16
       - oss/dry_run:
           name: Dry-run
           <<: *common_publish_filters
@@ -143,6 +156,7 @@ workflows:
             - NodeJS 10
             - NodeJS 12
             - NodeJS 14
+            - NodeJS 16
       - oss/confirmation:
           name: Confirmation
           type: approval
